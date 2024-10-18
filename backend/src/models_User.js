@@ -1,30 +1,35 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  myList: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Movie'
-  }],
-  watchHistory: [{
-    movie: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Movie'
+module.exports = (sequelize) => {
+  const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
-    progress: Number
-  }]
-}, { timestamps: true });
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }, {
+    timestamps: true
+  });
 
-module.exports = mongoose.model('User', UserSchema);
+  return User;
+};
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
