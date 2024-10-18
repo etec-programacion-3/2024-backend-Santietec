@@ -1,25 +1,27 @@
-// server.js
 const express = require('express');
-const connection = require('./database'); // Importa tu conexión a la base de datos
+const cors = require('cors');
+const helmet = require('helmet');
+require('dotenv').config();
+
+const { sequelize } = require('./models');
+const routes = require('./routes');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware para manejar JSON
+// Middleware
+app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
-// Endpoint de ejemplo para obtener datos
-app.get('/api/datos', (req, res) => {
-  const query = 'SELECT * FROM tu_tabla'; // Cambia esto al nombre de tu tabla
-  connection.query(query, (error, results) => {
-    if (error) {
-      return res.status(500).json({ error: 'Error en la consulta a la base de datos' });
-    }
-    res.json(results);
-  });
-});
+// Routes
+app.use('/api', routes);
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+// Sync database and start server
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}).catch(err => {
+  console.error('Unable to connect to the database:', err);
 });

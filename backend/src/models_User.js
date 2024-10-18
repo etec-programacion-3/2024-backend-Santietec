@@ -27,9 +27,9 @@ module.exports = (sequelize) => {
     timestamps: true
   });
 
+  User.associate = (models) => {
+    User.belongsToMany(models.Movie, { through: 'UserMovies', as: 'myList' });
+  };
+
   return User;
 };
-
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});

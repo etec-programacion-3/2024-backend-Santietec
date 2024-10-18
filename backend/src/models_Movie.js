@@ -36,5 +36,9 @@ module.exports = (sequelize) => {
     timestamps: true
   });
 
+  Movie.associate = (models) => {
+    Movie.belongsToMany(models.User, { through: 'UserMovies', as: 'users' });
+  };
+
   return Movie;
 };
