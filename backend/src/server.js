@@ -1,27 +1,25 @@
+// server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const connection = require('./database'); // Importa tu conexión a la base de datos
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
 
-// Middleware
-app.use(cors());
+// Middleware para manejar JSON
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+// Endpoint de ejemplo para obtener datos
+app.get('/api/datos', (req, res) => {
+  const query = 'SELECT * FROM tu_tabla'; // Cambia esto al nombre de tu tabla
+  connection.query(query, (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+    }
+    res.json(results);
+  });
+});
 
-// Routes
-const apiRoutes = require('./routes/api');
-app.use('/api', apiRoutes);
-
+// Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
